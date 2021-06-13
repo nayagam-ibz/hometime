@@ -1,10 +1,8 @@
 
-class Api::HomeController < ApplicationController
-  def index
-  end
+class Api::BookingsController < ApplicationController
   
   # create guest and reservation
-  def reservation
+  def create
     assign_params
     if @param.present?
       @guest = Guest.find_or_initialize_by(email: @email)
@@ -27,10 +25,10 @@ class Api::HomeController < ApplicationController
 
   def assign_params
     @param = true
-    if params.has_key?(:reservation).present?
+    if params.has_key?(:reservation)
       @guest_params = reservation_params_gusts
       @reservation_params = reservation_params_reservation
-    elsif params.has_key?(:guest).present?
+    elsif params.has_key?(:guest)
       @reservation_params = reservation_params
       @guest_params = guest_params
     else
@@ -39,22 +37,21 @@ class Api::HomeController < ApplicationController
   end
     
   def reservation_params
-    @reservation_params = Reservation.custom_params(params)
+    @reservation_params = Reservation.booking_req_type_one(params)
   end
 
   def guest_params
     @email = params[:guest][:email]
-    @guest_params = Guest.custom_params(params)
+    @guest_params = Guest.booking_req_type_one(params)
   end
 
   def reservation_params_reservation
-    @reservation_params = Reservation.custom_params_two(params)
+    @reservation_params = Reservation.booking_req_type_two(params)
   end
   
   def reservation_params_gusts
     @email = params[:reservation][:guest_email]
-    @guest_params = Guest.custom_params_two(params)
+    @guest_params = Guest.booking_req_type_two(params)
   end
+
 end
-
-
